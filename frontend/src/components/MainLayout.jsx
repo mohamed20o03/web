@@ -1,22 +1,60 @@
+/**
+ * Main layout component with navigation bar and content outlet.
+ * Provides consistent navigation across all authenticated and public pages.
+ * 
+ * @module components/MainLayout
+ * @component
+ * 
+ * Features:
+ * - Fixed glass morphism navigation bar
+ * - Role-based navigation links (Admin/Student/Public)
+ * - User profile dropdown with logout
+ * - Responsive design
+ * - Active route highlighting
+ * 
+ * @example
+ * <Route element={<MainLayout />}>
+ *   <Route path="/" element={<HomePage />} />
+ *   <Route path="/me" element={<ProfilePage />} />
+ * </Route>
+ * 
+ * @returns {JSX.Element} Layout with navigation and content outlet
+ */
+
 import React from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { authStorage } from "../core/auth/auth.storage";
 import logo from "../assets/psu-logo.png";
 
+/**
+ * MainLayout - Application layout with navigation.
+ * 
+ * @component
+ */
 export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = authStorage.getUser();
   const role = authStorage.getRole();
 
+  /**
+   * Handles user logout.
+   * Clears session storage and navigates to login page.
+   */
   function handleLogout() {
     authStorage.clear();
     navigate("/login");
   }
 
+  /**
+   * Checks if the given path matches current location.
+   * 
+   * @param {string} path - Path to check
+   * @returns {boolean} True if path is active
+   */
   const isActive = (path) => location.pathname === path;
 
-  // عرض الاسم أو الايميل، أو كلمة User كاحتياطي
+  // Display name, email prefix, or 'User' as fallback
   const displayName = user?.firstName || user?.email?.split("@")[0] || "User";
 
   return (
@@ -37,7 +75,7 @@ export default function MainLayout() {
           right: 0,
           height: "80px",
           zIndex: 1000,
-          background: "rgba(15, 23, 42, 0.7)", // خلفية داكنة شفافة
+          background: "rgba(15, 23, 42, 0.7)", // Transparent dark background
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
           borderBottom: "1px solid rgba(255, 255, 255, 0.1)",

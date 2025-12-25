@@ -3,7 +3,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* ✅ يمنع أي scroll بسبب blur */
+  overflow: hidden; /* Prevents scroll caused by blur effect */
   background: #333333;
 }
 
@@ -351,7 +351,7 @@ input[type="file"].input {
   font-size: 12px;
 }
 
-/* ✅ RTL Support لما اللغة عربي */
+/* RTL Support for Arabic language */
 .rtl {
   direction: rtl;
 }

@@ -9,7 +9,7 @@ import {
   verifyEmailWithToken,
   changeUserRole,
 } from "./admin.api";
-// ✅ استيراد الخلفية الموحدة
+// Import unified background image
 import bgImage from "../../assets/login-bg.jpg";
 
 export default function AdminReviewUserPage() {
@@ -65,13 +65,13 @@ export default function AdminReviewUserPage() {
       const data = res.data || res || {};
 
       let msg = "Verification email sent!";
-      // لو الباك إند في وضع testingMode=true، هيرجع التوكين
+      // If backend testingMode=true, it returns the token
       if (data.token) {
         msg += `\n\n[TEST TOKEN]: ${data.token}\n\n(Copied to console as well)`;
         console.log("TEST TOKEN:", data.token);
-        // نفتح خانة الإدخال تلقائياً
+        // Open manual verification input automatically
         setShowManualVerify(true);
-        setManualToken(data.token); // ✅ تسهيل: وضع التوكن تلقائياً في الخانة
+        setManualToken(data.token); // Convenience: auto-fill the token in the input field
       }
       alert(msg);
     } catch (err) {
@@ -89,7 +89,7 @@ export default function AdminReviewUserPage() {
       await verifyEmailWithToken(userId, manualToken);
       alert("✅ Email Verified Successfully!");
       setShowManualVerify(false);
-      loadAllData(); // تحديث الصفحة
+      loadAllData(); // Refresh the page data
     } catch (err) {
       alert(err.message || "Verification Failed");
     } finally {

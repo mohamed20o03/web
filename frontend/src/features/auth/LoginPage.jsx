@@ -1,10 +1,38 @@
+/**
+ * Login page component for user authentication.
+ * Supports login via email or national ID with password.
+ * Handles role-based navigation after successful authentication.
+ * 
+ * @module features/auth/LoginPage
+ * @component
+ * 
+ * @example
+ * <Route path="/login" element={<LoginPage />} />
+ * 
+ * @returns {JSX.Element} Login page with authentication form
+ */
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import bg from "../../assets/login-bg.jpg";
 import { authStorage } from "../../core/auth/auth.storage";
 import { useAuth } from "../../core/auth/auth.context";
-import { loginRequest } from "./auth.api"; // تأكدنا من استخدام نفس الاسم الموجود في ملفاتك
+import { loginRequest } from "./auth.api";
+import { pageBackground, centerContainer } from "../../core/theme";
 
+/**
+ * LoginPage - User authentication page.
+ * 
+ * Features:
+ * - Email/National ID authentication
+ * - Password visibility toggle
+ * - Role-based navigation (Admin → dashboard, Student → profile/pending)
+ * - Glass morphism design with background image
+ * - Error message display
+ * - Session management
+ * 
+ * @component
+ */
 export default function LoginPage() {
   const navigate = useNavigate();
   const { setSession } = useAuth();
@@ -15,6 +43,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  /**
+   * Handles form submission and authentication.
+   * Navigates based on user role and status after successful login.
+   * 
+   * @async
+   * @param {Event} e - Form submit event
+   */
   async function onSubmit(e) {
     e.preventDefault();
     setErrorMsg("");
@@ -33,7 +68,7 @@ export default function LoginPage() {
       token: data.token,
       userId: data.id,
       email: data.email,
-      firstName: data.firstName, // سنحاول حفظ الاسم إذا كان موجوداً
+      firstName: data.firstName,
       role: data.role,
       status: data.status,
     };
@@ -41,6 +76,7 @@ export default function LoginPage() {
     setSession(session);
     authStorage.set(session);
 
+    // Role-based navigation
     if (String(data.role).toUpperCase() === "ADMIN") {
       navigate("/admin/users", { replace: true });
     } else if (data.status !== "APPROVED") {
@@ -52,69 +88,39 @@ export default function LoginPage() {
 
   return (
     <div
+      className="min-h-screen flex items-center justify-center pt-20"
       style={{
-        minHeight: "100vh",
+        ...pageBackground(bg),
         backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingTop: 80, // مسافة للناف بار
       }}
     >
       {/* Glass Card */}
-      <div
-        style={{
-          background: "rgba(255, 255, 255, 0.05)",
-          backdropFilter: "blur(15px)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          padding: "50px",
-          borderRadius: "24px",
-          width: "100%",
-          maxWidth: "450px",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: 30 }}>
-          <h2 style={{ color: "white", fontSize: 28, marginBottom: 10 }}>
+      <div className="glass-card w-full max-w-md mx-4" style={{ padding: "50px" }}>
+        <div className="text-center mb-8">
+          <h2 className="text-white text-3xl font-bold mb-2">
             Welcome Back
           </h2>
-          <p style={{ color: "#94a3b8" }}>
+          <p className="text-slate-400">
             Login with your university account.
           </p>
         </div>
 
         {errorMsg && (
           <div
+            className="mb-5 p-3 rounded-lg text-center text-sm border"
             style={{
               background: "rgba(239, 68, 68, 0.15)",
               color: "#fca5a5",
-              padding: "12px",
-              borderRadius: "8px",
-              marginBottom: "20px",
-              fontSize: 14,
-              textAlign: "center",
-              border: "1px solid rgba(239, 68, 68, 0.2)",
+              borderColor: "rgba(239, 68, 68, 0.2)",
             }}
           >
             ⚠️ {errorMsg}
           </div>
         )}
 
-        <form
-          onSubmit={onSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: 20 }}
-        >
+        <form onSubmit={onSubmit} className="flex flex-col gap-5">
           <div>
-            <label
-              style={{
-                display: "block",
-                color: "#cbd5e1",
-                marginBottom: 8,
-                fontSize: 14,
-              }}
-            >
+            <label className="block text-slate-300 mb-2 text-sm">
               Email
             </label>
             <input
@@ -123,61 +129,54 @@ export default function LoginPage() {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="student@eng.psu.edu.eg"
-              style={inputStyle}
+              className="w-full px-4 py-3 rounded-xl text-white text-base outline-none input-dark"
             />
           </div>
 
           <div>
-            <label
-              style={{
-                display: "block",
-                color: "#cbd5e1",
-                marginBottom: 8,
-                fontSize: 14,
-              }}
-            >
+            <label className="block text-slate-300 mb-2 text-sm">
               Password
             </label>
-            <div style={{ position: "relative" }}>
+            <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                style={{ ...inputStyle, paddingRight: 40 }}
+                className="w-full px-4 py-3 pr-12 rounded-xl text-white text-base outline-none input-dark"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={eyeBtnStyle}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-xl text-slate-400"
               >
                 {showPassword ? "🙈" : "👁️"}
               </button>
             </div>
           </div>
 
-          <button type="submit" disabled={loading} style={primaryBtnStyle}>
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 py-3.5 px-4 rounded-xl text-white text-base font-bold cursor-pointer border-none"
+            style={{
+              background: loading
+                ? "rgba(100, 116, 139, 0.5)"
+                : "linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)",
+              boxShadow: loading ? "none" : "0 4px 15px rgba(0, 114, 255, 0.3)",
+              cursor: loading ? "not-allowed" : "pointer",
+            }}
+          >
             {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
 
-        <div
-          style={{
-            marginTop: 25,
-            textAlign: "center",
-            color: "#94a3b8",
-            fontSize: 14,
-          }}
-        >
+        <div className="mt-6 text-center text-slate-400 text-sm">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            style={{
-              color: "#38bdf8",
-              fontWeight: "bold",
-              textDecoration: "none",
-            }}
+            className="text-sky-400 font-bold no-underline hover:text-sky-300"
           >
             Register Now
           </Link>
@@ -186,37 +185,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px 16px",
-  background: "rgba(0, 0, 0, 0.2)",
-  border: "1px solid rgba(255, 255, 255, 0.1)",
-  borderRadius: "10px",
-  color: "white",
-  fontSize: "15px",
-  outline: "none",
-};
-const primaryBtnStyle = {
-  marginTop: 10,
-  padding: "14px",
-  background: "linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)",
-  color: "white",
-  border: "none",
-  borderRadius: "12px",
-  fontSize: 16,
-  fontWeight: "bold",
-  cursor: "pointer",
-  boxShadow: "0 4px 15px rgba(0, 114, 255, 0.3)",
-};
-const eyeBtnStyle = {
-  position: "absolute",
-  right: 10,
-  top: "50%",
-  transform: "translateY(-50%)",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  fontSize: "1.2rem",
-  color: "#94a3b8",
-};

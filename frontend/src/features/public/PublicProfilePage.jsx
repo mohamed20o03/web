@@ -1,9 +1,19 @@
+/**
+ * @fileoverview PublicProfilePage displays a user's public profile with visibility controls.
+ * @module features/public/PublicProfilePage
+ */
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicProfile } from "./public.api";
-// ✅ 1. استيراد نفس صورة الخلفية
 import bgImage from "../../assets/login-bg.jpg";
+import { colors } from "../../core/theme";
 
+/**
+ * PublicProfilePage - Displays user profile based on visibility settings (PUBLIC/STUDENTS_ONLY/PRIVATE)
+ * @component
+ * @returns {JSX.Element} Public profile page with glass design
+ */
 export default function PublicProfilePage() {
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
@@ -28,8 +38,13 @@ export default function PublicProfilePage() {
 
   // --- Loading State (Glass Style) ---
   if (loading) return (
-    <div style={pageWrapperStyle}>
-      <div style={{color: "rgba(255,255,255,0.7)", marginTop: 100, fontSize: 18}}>Loading Profile...</div>
+    <div className="min-h-screen flex items-center justify-center text-center" style={{
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url(${bgImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundAttachment: "fixed"
+    }}>
+      <div className="text-white/70 text-lg">Loading Profile...</div>
     </div>
   );
   
@@ -41,126 +56,108 @@ export default function PublicProfilePage() {
     const isStudentsOnly = visibility === "STUDENTS_ONLY";
     
     return (
-      <div style={pageWrapperStyle}>
-        <div style={glassCardStyle}>
-          <div style={{ fontSize: 40, marginBottom: 15 }}>🔒</div>
-          <h3 style={{color: "white", margin: 0}}>
+      <div className="min-h-screen flex items-center justify-center text-center px-5" style={{
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed"
+      }}>
+        <div className="glass-card max-w-md p-10 text-center">
+          <div className="text-4xl mb-4">🔒</div>
+          <h3 className="text-white text-2xl font-bold m-0">
             {error || (isStudentsOnly ? "This profile is for students only." : "This profile is private.")}
           </h3>
-          <p style={{color: "rgba(255,255,255,0.6)", marginTop: 10}}>
+          <p className="text-white/60 mt-2.5">
             {isStudentsOnly 
               ? "Please sign in to view this student's profile." 
               : "You cannot view this student's information."}
           </p>
-          <Link to="/" style={backBtnStyle}>Back to Directory</Link>
+          <Link to="/" className="inline-block mt-6 no-underline text-[#4de1ff] text-sm font-bold bg-[#00c6ff]/10 px-5 py-2.5 rounded-full hover:bg-[#00c6ff]/20 transition-all">Back to Directory</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={pageWrapperStyle}>
+    <div className="min-h-screen flex items-center justify-center text-center px-5 py-20" style={{
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url(${bgImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundAttachment: "fixed"
+    }}>
       {/* Container limits width */}
-      <div style={{ maxWidth: 900, width: "100%" }}>
+      <div className="max-w-4xl w-full">
         
         {/* === MAIN GLASS CARD === */}
-        <div style={{
-          ...glassCardStyle,
-          padding: 0, // Reset padding for internal layout
-          overflow: "hidden"
-        }}>
+        <div className="glass-card p-0 overflow-hidden">
           
           {/* --- Header Section (Gradient Overlay) --- */}
-          <div style={{ 
-            background: "linear-gradient(to bottom, rgba(0,198,255,0.1), rgba(0,0,0,0))", 
-            padding: "50px 40px 30px",
-            display: "flex", 
-            flexWrap: "wrap", 
-            gap: 30, 
-            alignItems: "center",
-            borderBottom: "1px solid rgba(255,255,255,0.1)"
-          }}>
+          <div className="bg-gradient-to-b from-[#00c6ff]/10 to-transparent py-12 px-10 flex flex-wrap gap-8 items-center border-b border-white/10">
             {/* Profile Image with Glow */}
-            <div style={{ position: "relative" }}>
-              <div style={{
-                position: "absolute", top: -5, left: -5, right: -5, bottom: -5,
-                background: "linear-gradient(45deg, #00c6ff, #0072ff)",
-                borderRadius: "50%", opacity: 0.6, filter: "blur(15px)"
-              }}></div>
+            <div className="relative">
+              <div className="absolute -inset-1.5 bg-gradient-to-br from-[#00c6ff] to-[#0072ff] rounded-full opacity-60 blur-[15px]"></div>
               <img 
                 src={profile.profilePhoto || profile.profilePhotoUrl || "https://via.placeholder.com/160"} 
                 alt="Profile"
-                style={{ 
-                  width: 140, height: 140, borderRadius: "50%", 
-                  border: "3px solid rgba(255,255,255,0.9)", 
-                  objectFit: "cover", position: "relative", zIndex: 2
-                }} 
+                className="w-36 h-36 rounded-full border-3 border-white/90 object-cover relative z-10" 
               />
             </div>
             
-            <div style={{ flex: 1, minWidth: 250 }}>
-              <h1 style={{ margin: "0 0 8px", color: "white", fontSize: "2.2rem", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+            <div className="flex-1 min-w-[250px] text-left">
+              <h1 className="m-0 mb-2 text-white text-4xl font-bold" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
                 {profile.firstName} {profile.lastName}
               </h1>
               
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", color: "rgba(255,255,255,0.8)" }}>
-                <span style={{ 
-                  background: "rgba(0,198,255,0.15)", border: "1px solid rgba(0,198,255,0.3)",
-                  padding: "4px 12px", borderRadius: 20, color: "#4de1ff", fontWeight: "bold", fontSize: 13 
-                }}>
+              <div className="flex flex-wrap gap-2.5 items-center text-white/80">
+                <span className="bg-[#00c6ff]/15 border border-[#00c6ff]/30 px-3 py-1 rounded-full text-[#4de1ff] font-bold text-sm">
                   {profile.faculty}
                 </span>
                 <span>•</span>
-                <span style={{ fontSize: 15 }}>{profile.department}</span>
+                <span className="text-base">{profile.department}</span>
               </div>
             </div>
 
             {/* Social Actions */}
-            <div style={{ display: "flex", gap: 10 }}>
+            <div className="flex gap-2.5">
               {profile.linkedin && (
-                 <a href={profile.linkedin} target="_blank" rel="noreferrer" style={socialBtnStyle("#0077b5")}>LinkedIn</a>
+                 <a href={profile.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center px-5 py-2 bg-[#0077b5] text-white no-underline rounded-xl text-sm font-semibold shadow-lg hover:opacity-90 transition-opacity">LinkedIn</a>
               )}
               {profile.github && (
-                 <a href={profile.github} target="_blank" rel="noreferrer" style={socialBtnStyle("#24292e")}>GitHub</a>
+                 <a href={profile.github} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center px-5 py-2 bg-white/15 text-white no-underline rounded-xl text-sm font-semibold shadow-lg hover:bg-white/25 transition-all">GitHub</a>
               )}
             </div>
           </div>
 
           {/* --- Body Content --- */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
             
             {/* Left: Bio & Skills */}
-            <div style={{ padding: 40, borderRight: "1px solid rgba(255,255,255,0.1)" }}>
+            <div className="p-10 border-r border-white/10">
               <SectionTitle icon="📝" title="Biography" />
-              <p style={{ lineHeight: 1.8, color: "rgba(255,255,255,0.8)", fontSize: "1.05rem", whiteSpace: "pre-wrap" }}>
+              <p className="leading-relaxed text-white/80 text-lg whitespace-pre-wrap">
                 {profile.bio || "This student hasn't written a bio yet."}
               </p>
 
-              <div style={{ marginTop: 40 }}>
+              <div className="mt-10">
                 <SectionTitle icon="💡" title="Skills & Interests" />
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 15 }}>
+                <div className="flex flex-wrap gap-2.5 mt-4">
                   {profile.interests ? (
                     profile.interests.split(/[,،\n]+/).map((tag, i) => (
                       tag.trim() && (
-                        <span key={i} style={{ 
-                          background: "rgba(255,255,255,0.1)", 
-                          padding: "8px 16px", borderRadius: 30, 
-                          fontSize: 14, color: "white", 
-                          border: "1px solid rgba(255,255,255,0.2)"
-                        }}>
+                        <span key={i} className="bg-white/10 px-4 py-2 rounded-full text-sm text-white border border-white/20">
                           {tag.trim()}
                         </span>
                       )
                     ))
                   ) : (
-                     <span style={{ color: "rgba(255,255,255,0.5)" }}>No skills listed.</span>
+                     <span className="text-white/50">No skills listed.</span>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Right: Info Sidebar */}
-            <div style={{ padding: 40, background: "rgba(0,0,0,0.1)" }}>
+            <div className="p-10 bg-black/10">
               <SectionTitle icon="ℹ️" title="Information" />
               
               <InfoItem label="Academic Year" value={`Year ${profile.year}`} />
@@ -170,8 +167,8 @@ export default function PublicProfilePage() {
                  <InfoItem label="Phone" value={profile.phone} />
               )}
               
-              <div style={{ marginTop: 40, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-                <Link to="/" style={backBtnStyle}>
+              <div className="mt-10 pt-5 border-t border-white/10">
+                <Link to="/" className="inline-block no-underline text-[#4de1ff] text-sm font-bold bg-[#00c6ff]/10 px-5 py-2.5 rounded-full hover:bg-[#00c6ff]/20 transition-all">
                    ← Back to Directory
                 </Link>
               </div>
@@ -184,80 +181,33 @@ export default function PublicProfilePage() {
   );
 }
 
-// === Styles Objects ===
-
-// 1. غلاف الصفحة (Background)
-const pageWrapperStyle = {
-  minHeight: "100vh",
-  backgroundImage: `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url(${bgImage})`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundAttachment: "fixed",
-  display: "flex",
-  justifyContent: "center",
-  padding: "40px 20px 60px",
-  fontFamily: "'Segoe UI', Roboto, sans-serif",
-};
-
-// 2. ستايل الكارت الزجاجي (Glassmorphism)
-const glassCardStyle = {
-  background: "rgba(255, 255, 255, 0.05)",
-  backdropFilter: "blur(16px)",
-  WebkitBackdropFilter: "blur(16px)",
-  border: "1px solid rgba(255, 255, 255, 0.15)",
-  borderRadius: 24,
-  boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.4)",
-  color: "white",
-  width: "100%",
-  textAlign: "left",
-};
-
-// 3. مكون العنوان الداخلي
+/**
+ * SectionTitle - Displays a section header with icon
+ * @param {object} props - Component props
+ * @param {string} props.icon - Emoji icon
+ * @param {string} props.title - Section title text
+ * @returns {JSX.Element}
+ */
 function SectionTitle({ icon, title }) {
   return (
-    <h3 style={{ 
-      color: "white", margin: "0 0 20px", display: "flex", alignItems: "center", gap: 10,
-      fontSize: "1.3rem", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 10
-    }}>
+    <h3 className="text-white m-0 mb-5 flex items-center gap-2.5 text-xl border-b border-white/10 pb-2.5">
       <span>{icon}</span> {title}
     </h3>
   );
 }
 
-// 4. مكون عرض المعلومة
+/**
+ * InfoItem - Displays a labeled info field
+ * @param {object} props - Component props
+ * @param {string} props.label - Field label
+ * @param {string} props.value - Field value
+ * @returns {JSX.Element}
+ */
 function InfoItem({ label, value }) {
   return (
-    <div style={{ marginBottom: 25 }}>
-      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>{label}</div>
-      <div style={{ fontSize: 16, fontWeight: 500, color: "white", wordBreak: "break-all" }}>{value || "N/A"}</div>
+    <div className="mb-6">
+      <div className="text-xs text-white/50 uppercase tracking-wider mb-1.5">{label}</div>
+      <div className="text-base font-medium text-white break-all">{value || "N/A"}</div>
     </div>
   );
 }
-
-// 5. زر الرجوع
-const backBtnStyle = {
-  display: "inline-block",
-  textDecoration: "none", 
-  color: "#4de1ff", 
-  fontSize: 15,
-  fontWeight: "bold",
-  background: "rgba(0,198,255,0.1)",
-  padding: "10px 20px",
-  borderRadius: 30,
-  transition: "0.2s"
-};
-
-// 6. أزرار التواصل الاجتماعي
-const socialBtnStyle = (bg) => ({
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "8px 20px",
-  background: bg === "#24292e" ? "rgba(255,255,255,0.15)" : bg, // GitHub transparent looks better on dark
-  color: "white",
-  textDecoration: "none",
-  borderRadius: 10,
-  fontSize: 14,
-  fontWeight: 600,
-  boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
-});

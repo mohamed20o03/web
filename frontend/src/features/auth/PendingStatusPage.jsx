@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authStorage } from "../../core/auth/auth.storage";
 import { apiFetch } from "../../core/api/http";
-import styles from "./LoginPage.module.css"; // تأكد أن الملف ده موجود
+import styles from "./LoginPage.module.css"; // Make sure this file exists
 import bg from "../../assets/login-bg.jpg";
 import logo from "../../assets/psu-logo.png";
 
@@ -20,7 +20,7 @@ export default function PendingStatusPage() {
   const [bio, setBio] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [github, setGithub] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState(""); // الاسم الصحيح للباك إند
+  const [profilePhoto, setProfilePhoto] = useState(""); // Correct field name for backend
 
   const navigate = useNavigate();
   const [status, setStatus] = useState("");
@@ -38,7 +38,7 @@ export default function PendingStatusPage() {
 
   async function loadProfile() {
     setLoading(true);
-    // جلب البيانات الحالية (لو الطالب كان عباها قبل كدة)
+    // Fetch current data (if the student previously filled it out)
     const res = await apiFetch(
       "/api/profile",
       { method: "GET" },
@@ -122,7 +122,7 @@ export default function PendingStatusPage() {
     setSaving(false);
 
     if (res.ok) {
-      // تحديث الصورة فوراً في الواجهة
+      // Update photo immediately in the UI
       setProfilePhoto(res.data.url || URL.createObjectURL(file));
       setSuccess("Photo uploaded successfully!");
     } else {
@@ -149,7 +149,7 @@ export default function PendingStatusPage() {
   }
 
   return (
-    // استخدام فليكس بوكس هنا لضمان التوسيط العمودي والأفقي
+    // Use flexbox for vertical and horizontal centering
     <div
       className={styles.page}
       style={{
@@ -168,7 +168,7 @@ export default function PendingStatusPage() {
       />
       <div className={styles.overlay} />
 
-      {/* الكارت الرئيسي */}
+      {/* Main card */}
       <main
         className={styles.card}
         style={{

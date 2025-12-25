@@ -1,49 +1,169 @@
+/**
+ * Admin API module.
+ * Provides administrative functions for user management, approval workflow, and email verification.
+ * All endpoints require authentication with ADMIN role.
+ * 
+ * @module features/admin/admin.api
+ */
+
 import { apiFetch } from "../../core/api/http";
 
-// جلب قائمة المستخدمين (للدليل أو للأدمن)
+/**
+ * Fetches all registered users in the system.
+ * Admin-only endpoint.
+ * 
+ * @async
+ * @function getAllUsers
+ * @returns {Promise<Object>} Response with array of all users
+ * @throws {Error} If unauthorized or server error occurs
+ * 
+ * @example
+ * const response = await getAllUsers();
+ * // response.data = [{ id: 1, email: '...', status: 'APPROVED', ... }, ...]
+ */
 export function getAllUsers() {
   return apiFetch("/api/admin/users", { method: "GET" }, { auth: true });
 }
 
-// جلب قائمة الانتظار
+/**
+ * Fetches users with PENDING approval status.
+ * Admin-only endpoint for approval workflow.
+ * 
+ * @async
+ * @function getPendingUsers
+ * @returns {Promise<Object>} Response with array of pending users awaiting approval
+ * @throws {Error} If unauthorized or server error occurs
+ * 
+ * @example
+ * const response = await getPendingUsers();
+ * // response.data = [{ id: 2, email: '...', status: 'PENDING', ... }, ...]
+ */
 export function getPendingUsers() {
   return apiFetch("/api/admin/users/pending", { method: "GET" }, { auth: true });
 }
 
-// جلب تفاصيل مستخدم معين
+/**
+ * Fetches detailed information for a specific user.
+ * Admin-only endpoint.
+ * 
+ * @async
+ * @function getUserDetails
+ * @param {number} userId - The unique identifier of the user
+ * @returns {Promise<Object>} Response with complete user details
+ * @throws {Error} If user not found, unauthorized, or server error
+ * 
+ * @example
+ * const response = await getUserDetails(5);
+ * // response.data = { id: 5, email: '...', nationalId: '...', status: '...', ... }
+ */
 export function getUserDetails(userId) {
   return apiFetch(`/api/admin/users/${userId}`, { method: "GET" }, { auth: true });
 }
 
-// جلب بروفايل الطالب (البيانات الإضافية)
+/**
+ * Fetches student profile information including bio, social links, and visibility settings.
+ * 
+ * @async
+ * @function getStudentProfile
+ * @param {number} userId - The unique identifier of the student
+ * @returns {Promise<Object>} Response with student profile data
+ * @throws {Error} If profile not found or server error
+ * 
+ * @example
+ * const response = await getStudentProfile(5);
+ * // response.data = { bio: '...', linkedin: '...', github: '...', visibility: 'PUBLIC', ... }
+ */
 export function getStudentProfile(userId) {
   return apiFetch(`/api/profile/${userId}`, { method: "GET" }, { auth: true });
 }
 
-// الموافقة أو الرفض
+/**
+ * Approves or rejects a pending user registration.
+ * Admin-only endpoint for user approval workflow.
+ * 
+ * @async
+ * @function approveRejectUser
+ * @param {Object} data - Approval decision data
+ * @param {number} data.userId - ID of the user to approve/reject
+ * @param {boolean} data.approved - true to approve, false to reject
+ * @param {string} [data.rejectionReason] - Required if approved is false, reason for rejection
+ * @returns {Promise<Object>} Response confirming the action
+ * @throws {Error} If user not found, missing reason on rejection, or server error
+ * 
+ * @example
+ * // Approve user
+ * await approveRejectUser({ userId: 5, approved: true });
+ * 
+ * // Reject user with reason
+ * await approveRejectUser({ 
+ *   userId: 5, 
+ *   approved: false, 
+ *   rejectionReason: 'Invalid national ID document' 
+ * });
+ */
 export function approveRejectUser(data) {
-  // data = { userId, approved: true/false, rejectionReason: "..." }
   return apiFetch("/api/admin/users/approve-reject", { 
     method: "POST", 
     body: JSON.stringify(data) 
   }, { auth: true });
 }
 
-// ✅ الدالة التي كانت تسبب المشكلة (إرسال التوكن)
+/**
+ * Sends email verification link to a user.
+ * Admin-only endpoint. If backend is in testingMode, returns the token in response.
+ * 
+ * @async
+ * @function sendVerification
+ * @param {number} userId - ID of the user to send verification email to
+ * @returns {Promise<Object>} Response confirming email sent (may include test token)
+ * @throws {Error} If user not found, email already verified, or server error
+ * 
+ * @example
+ * const response = await sendVerification(5);
+ * // In testing mode: response.data = { message: '...', token: 'abc123...' }
+ * // In production: response.data = { message: 'Verification email sent' }
+ */
 export function sendVerification(userId) {
-  // الرابط بناءً على AdminController: /api/admin/users/{userId}/send-verification
   return apiFetch(`/api/admin/users/${userId}/send-verification`, { method: "POST" }, { auth: true });
 }
 
-// ✅ دالة التحقق اليدوي بالتوكن
+/**
+ * Manually verifies a user's email using a verification token.
+ * Admin-only endpoint for manual verification (typically used in testing).
+ * 
+ * @async
+ * @function verifyEmailWithToken
+ * @param {number} userId - ID of the user to verify
+ * @param {string} token - Email verification token
+ * @returns {Promise<Object>} Response confirming email verification
+ * @throws {Error} If token invalid, expired, or user not found
+ * 
+ * @example
+ * await verifyEmailWithToken(5, 'abc123def456');
+ */
 export function verifyEmailWithToken(userId, token) {
-  // الرابط بناءً على AdminController: /api/admin/users/{userId}/verify-email/{token}
   return apiFetch(`/api/admin/users/${userId}/verify-email/${token}`, { method: "POST" }, { auth: true });
 }
 
-// ✅ Change user role (make admin or demote to student)
+/**
+ * Changes a user's role between ADMIN and STUDENT.
+ * Admin-only endpoint for role management.
+ * 
+ * @async
+ * @function changeUserRole
+ * @param {number} userId - ID of the user to update
+ * @param {('ADMIN'|'STUDENT')} role - New role to assign
+ * @returns {Promise<Object>} Response confirming role change
+ * @throws {Error} If invalid role, user not found, or server error
+ * 
+ * @example
+ * // Promote to admin
+ * await changeUserRole(5, 'ADMIN');
+ * 
+ * // Demote to student
+ * await changeUserRole(3, 'STUDENT');
+ */
 export function changeUserRole(userId, role) {
-  // role should be "ADMIN" or "STUDENT"
   return apiFetch(`/api/admin/users/${userId}/change-role`, {
     method: "POST",
     body: JSON.stringify({ role })

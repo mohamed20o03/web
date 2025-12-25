@@ -1,7 +1,55 @@
 @import "tailwindcss";
+
+/* Custom Theme Extensions */
+@theme {
+  /* Custom colors */
+  --color-primary: #00c6ff;
+  --color-primary-light: #4de1ff;
+  --color-primary-dark: #0099cc;
+  
+  /* Glass morphism colors */
+  --color-glass-bg: rgba(255, 255, 255, 0.05);
+  --color-glass-bg-light: rgba(255, 255, 255, 0.1);
+  --color-glass-border: rgba(255, 255, 255, 0.15);
+  
+  /* Custom shadows */
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --shadow-glass-strong: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom Utility Classes */
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  }
+  
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .bg-overlay-dark {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8));
+  }
+  
+  .input-dark {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
 html, body, #root {
   height: 100%;
 }
+
 :root{
   --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-title: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -15,3 +63,4 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
