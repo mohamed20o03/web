@@ -2,7 +2,7 @@ export function toApiError(status, body) {
   const pickMsg =
     body?.message ||
     body?.error ||
-    body?.email || // الباك اند عندك ساعات بيرجع error string في email field
+    body?.email || // Backend sometimes returns error string in email field
     body?.raw ||
     "Request failed";
 

@@ -1,9 +1,35 @@
+/**
+ * Multi-step signup/registration page for new students.
+ * Collects personal information, academic details, and optional ID scan.
+ * 
+ * @module features/auth/SignupPage
+ * @component
+ * 
+ * @example
+ * <Route path="/signup" element={<SignupPage />} />
+ * 
+ * @returns {JSX.Element} Three-step registration form
+ * 
+ * Features:
+ * - Step 1: Personal info (name, DOB, email, password)
+ * - Step 2: Academic info (nationalId, faculty, department, year)
+ * - Step 3: Optional National ID scan upload
+ * - Dynamic faculty/department loading from backend
+ * - Form validation and error handling
+ * - Progress indicator
+ */
+
 import React, { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import bg from "../../assets/login-bg.jpg";
 import { signupRequest } from "./auth.api";
 import { getFaculties, getDepartments } from "../public/public.api";
 
+/**
+ * SignupPage - Multi-step user registration form.
+ * 
+ * @component
+ */
 export default function SignupPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);

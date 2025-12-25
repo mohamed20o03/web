@@ -12,10 +12,10 @@ export function RequireApprovedStudent({ children }) {
   const role = (session.role || "").toLowerCase();
   const status = (session.status || "").toUpperCase();
 
-  // admin يدخل عادي
+  // Admin users have full access
   if (role === "admin") return children;
 
-  // student لازم Approved
+  // Students must have APPROVED status
   if (status !== "APPROVED") {
     return <Navigate to="/status" replace />;
   }
